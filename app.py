@@ -13,13 +13,11 @@ SESSION_FILE = Path("tidal_session.json")
 
 def get_session():
 	session = tidalapi.Session()
-	if SESSION_FILE.exists():
-		data = json.loads(SESSION_FILE.read_text())
-		session.load_oauth_session(
-			data["token_type"],
-			data["access_token"],
-			data["refresh_token"]
-		)
+	token_type = os.environ.get("TIDAL_TOKEN_TYPE", "Bearer")
+	access_token = os.environ.get("TIDAL_ACCESS_TOKEN")
+	refresh_token = os.environ.get("TIDAL_REFRESH_TOKEN")
+	if access_token and refresh_token:
+		session.load_oauth_session(token_type, access_token, refresh_token)
 	return session if session.check_login() else None
 
 HTML = """
